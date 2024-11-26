@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Tax Document Uploader",
+  "version": "1.0",
+  "description": "Upload your tax documents securely.",
+  "permissions": ["storage", "activeTab", "scripting", "windows"],
+  "host_permissions": ["http://localhost:5001/*"],
+  "action": {},
+  "background": {
+    "service_worker": "background.js"
+  }
+}
