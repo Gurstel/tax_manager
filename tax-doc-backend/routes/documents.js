@@ -12,11 +12,42 @@ const Document = require("../models/Document");
 
 const s3 = new S3Client({ region: process.env.AWS_REGION });
 
-// Get list of documents
+// Get list of documents with optional year/month and search filtering
 router.get("/", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    const documents = await Document.find({ userId });
+    const { year, month, search } = req.query;
+
+    const query = { userId };
+
+    // Date Filtering (uploadedAt)
+    if (year && !isNaN(year)) {
+      const parsedYear = parseInt(year, 10);
+
+      if (month && !isNaN(month)) {
+        // Filter by specific year and month
+        const parsedMonth = parseInt(month, 10) - 1; // JS months are 0-based
+        const start = new Date(parsedYear, parsedMonth, 1, 0, 0, 0);
+        const end = new Date(parsedYear, parsedMonth + 1, 1, 0, 0, 0);
+        query.uploadedAt = { $gte: start, $lt: end };
+      } else {
+        // Filter by entire year
+        const start = new Date(parsedYear, 0, 1, 0, 0, 0);
+        const end = new Date(parsedYear + 1, 0, 1, 0, 0, 0);
+        query.uploadedAt = { $gte: start, $lt: end };
+      }
+    }
+
+    // Name Search Filtering
+    if (search && search.trim() !== "") {
+      if (search.includes("\\") || search.includes("$")) {
+        // Prevent regex injection
+        return res.status(400).send("Invalid search query.");
+      }
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    const documents = await Document.find(query).sort({ uploadedAt: -1 });
     res.json(documents);
   } catch (error) {
     console.error("Error fetching documents:", error);

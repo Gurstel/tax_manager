@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Tax Documents</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Login Form -->
-    <form id="login-form">
+    <form id="login-form" class="form-container">
         <h2>Log In</h2>
         <input type="email" id="email" placeholder="Email" required />
         <input type="password" id="password" placeholder="Password" required />
@@ -14,8 +16,8 @@
     </form>
 
     <!-- Upload Section (Hidden by Default) -->
-    <div id="upload-section" style="display: none;">
-        <div id="drop-zone">
+    <div id="upload-section" class="hidden">
+        <div id="drop-zone" class="drop-zone">
             <p>Drag and drop your tax documents here</p>
         </div>
     </div>
